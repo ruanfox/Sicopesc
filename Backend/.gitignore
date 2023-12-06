@@ -1,0 +1,9 @@
+node_modules/
+.env
+__tests__/coverage
+package.lock.json
+
+db/
+db_data/*
+
+yarn-error.log

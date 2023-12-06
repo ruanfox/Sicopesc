@@ -1,0 +1,9 @@
+image: node:14
+pipelines:
+  branches:
+    master:
+      - step:
+          name: deploy
+          deployment: test
+          script:
+            - cat ./deploy.sh | ssh root@191.252.113.52

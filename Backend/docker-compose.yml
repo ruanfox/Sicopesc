@@ -1,0 +1,41 @@
+version: "3.7"
+services:
+  db_siscol:
+    image: mysql
+    container_name: mysql-container
+    volumes:
+      - ./db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_USER: siscol
+      MYSQL_PASSWORD: d1e749ca20d9653323ec5beb28b9fd64
+      MYSQL_DATABASE: siscol
+      MYSQL_ROOT_PASSWORD: f11536bee899541aa233f5c0aa98f625
+    ports:
+      - "9006:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: on-failure
+    environment:
+      PMA_HOST: db_siscol
+      MYSQL_ROOT_PASSWORD: f11536bee899541aa233f5c0aa98f625
+      UPLOAD_LIMIT: 300000000
+      #MYSQL_DATABASE: lms_manager
+    ports:
+      - 8082:80
+    depends_on:
+      - db_siscol
+
+  backend_siscol:
+    image: node:12
+    container_name: backend-siscol-container
+    volumes:
+      - ./:/home/app
+    restart: always
+    ports:
+      - "15999:15999"
+    command: bash -c "npm i && npx sequelize db:migrate && npm run dev"
+    working_dir: /home/app
+    depends_on:
+      - db_siscol

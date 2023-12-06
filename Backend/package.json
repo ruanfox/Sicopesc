@@ -1,0 +1,46 @@
+{
+  "name": "siscol16",
+  "version": "1.0.0",
+  "description": "Sistema para gerenciamento de uma colônia de pescadores",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test jest",
+    "pretest": "NODE_ENV=test sequelize db:create siscol_test sequelize db:migrate",
+    "posttest": "rm ./__tests__/database.sqlite",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js --ignore __tests__",
+    "prod": "pm2 start src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavo-amaro/Sis_col16.git"
+  },
+  "author": "Gustavo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gustavo-amaro/Sis_col16/issues"
+  },
+  "homepage": "https://github.com/gustavo-amaro/Sis_col16#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-paginate": "^1.0.2",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.17.1",
+    "mysql2": "^2.1.0",
+    "numero-por-extenso": "^1.0.8",
+    "rand-token": "^1.0.1",
+    "sequelize": "^5.21.3"
+  },
+  "devDependencies": {
+    "faker": "^5.4.0",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.2",
+    "sequelize-cli": "^5.5.1",
+    "sqlite": "^4.0.19",
+    "sqlite3": "^5.0.2",
+    "supertest": "^6.1.3"
+  }
+}
