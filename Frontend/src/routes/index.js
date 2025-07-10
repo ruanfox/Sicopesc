@@ -20,7 +20,7 @@ import Venda from "../pages/Venda";
 import Recibo from "../pages/Recibo";
 import Users from "../pages/Users";
 import NewUser from "../pages/Users/NewUser";
-//import LandPage from "../pages/LandPage";
+import LandPage from "../pages/LandPage";
 import DividedRoute from "./DividedRoute";
 import RegisterFinished from "../pages/Register/RegisterFinished";
 import Relatorios from "../pages/Relatorios";
@@ -139,29 +139,40 @@ const Routes = () => (
       title="Editar usuário"
       component={NewUser}
     />
+
     <PrivateRoute
       exact
       path="/relatorios"
       title="Relatórios"
       component={Relatorios}
     />
+
     <PrivateRoute
       exact
       path="/relatorios/anuidade"
       title="Relatório de anuidades"
       component={RelatorioAnuidade}
     />
+
     <PrivateRoute
       exact
       path="/relatorios/caixa"
       title="Relatório de Compra e venda de pescado"
       component={RelatorioCaixa}
     />
+
+    <Route
+      exact
+      path="/login"
+      description="Bem vindo(a) ao SISCOL!"
+      component={() => <Redirect to="/login" />}
+    />
+
     <Route
       exact
       path="/"
-      description="Bem vindo(a) ao SISCOL!"
-      component={() => <Redirect to="/login" />}
+      description="Bem vindo ao Sicopesc!"
+      component={LandPage}
     />
 
     <ConfigRoute
@@ -170,6 +181,7 @@ const Routes = () => (
       title="Configurações Gerais"
       component={RelatorioCaixa}
     />
+
     <PrivateRoute path="*" component={Erro404} />
   </Switch>
 );
