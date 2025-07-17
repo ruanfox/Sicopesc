@@ -18,6 +18,7 @@ export default function NovoPescador(props) {
   const [emissaoRgp, setEmissaoRgp] = useState("");
   const [filiacao, setFiliacao] = useState("");
   const [toLogin, setToLogin] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fisherId = props.match.params.id;
@@ -55,7 +56,10 @@ export default function NovoPescador(props) {
     if (!id) addFisher(e);
     else updateFisher(e);
   }
+  
   async function addFisher(e) {
+    e.preventDefault();
+  
     const data = {
       nome: e.target.nome.value.toUpperCase(),
       cpf: e.target.cpf.value.replace(/\D/g, ""),
@@ -69,21 +73,38 @@ export default function NovoPescador(props) {
       nit: e.target.nit.value.replace(/\D/g, ""),
       cei: e.target.cei.value.replace(/\D/g, ""),
     };
-    const jsonData = JSON.stringify(data);
+  
     try {
-      const response = await api.post("/pescadores", jsonData);
+      const response = await api.post("/pescadores", data);
 
-      if (response.data.erro) {
-        alert("erro " + response.data.erro);
-      } else if (response.status === 200) {
-        alert("Pescador cadastrado no sistema!");
+      if (response.status === 200 && response.data) {
+        alert("Pescador cadastrado com sucesso!");
         setId(response.data.id);
         setToAddress(true);
+      } else {
+        setErrorMessage(response.data.erro || "Erro ao cadastrar o pescador.");
       }
-    } catch (e) {
-      setToLogin(true);
-    }
+    } catch (error) {
+      if (error.response) {
+        const data = error.response.data;
+    
+        // Pegando a mensagem correta do backend
+        if (typeof data.message === "string") {
+          setErrorMessage(data.message);
+        } else if (typeof data.error === "string") {
+          setErrorMessage(data.error);
+        } else {
+          console.warn("Resposta inesperada do servidor:", data); 
+          setErrorMessage("Erro desconhecido do servidor.");
+        }
+      } else if (error.request) {
+        setErrorMessage("Servidor não respondeu. Verifique sua conexão.");
+      } else {
+        setErrorMessage("Erro ao enviar requisição.");
+      }
+    }  
   }
+  
   async function updateFisher(e) {
     const data = {
       nome: e.target.nome.value.toUpperCase(),
@@ -121,6 +142,11 @@ export default function NovoPescador(props) {
   }
   return (
     <div className="container">
+      {errorMessage && (
+        <div className="alert alert-danger mt-3 text-center">
+          {errorMessage}
+        </div>
+      )}
 
       <div className="card">
         <div className="card-body">
