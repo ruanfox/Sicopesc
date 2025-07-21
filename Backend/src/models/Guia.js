@@ -8,7 +8,7 @@ class Guias extends Model {
         valor: DataTypes.DECIMAL,
         data_emissao: DataTypes.DATE,
         ano: DataTypes.INTEGER,
-        rgp: DataTypes.STRING,
+        rgp: DataTypes.STRING(20),
       },
       {
         sequelize: connection,

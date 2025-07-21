@@ -191,7 +191,20 @@ export default function Pescador(props) {
             </tr>
           ))}
         </tbody>
+      </table>
+      
         {loading ? <HashLoader size={30} /> : ""}
+      
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "20px"
+        }}
+      >
         <Pagination
           activePage={parseInt(pagination.currentPage)}
           pageCount={parseInt(pagination.pageCount)}
@@ -212,7 +225,7 @@ export default function Pescador(props) {
           lastPageText={<FaForward />}
           firstPageText={<FaBackward />}
         />
-      </table>
+      </div>
 
       <Modal show={showModalExcluir} size="lg" centered>
         <Modal.Header>

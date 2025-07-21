@@ -38,12 +38,16 @@ class PescadorController {
     const limit = req.query.limit ? req.query.limit : 10;
     const page = req.query.page ? req.query.page : 1;
 
+    // Se há um CPF específico na query, buscar por CPF
+    const whereClause = { entidade_id };
+    if (req.query.cpf) {
+      whereClause.cpf = req.query.cpf;
+    }
+
     const result = await Pescador.findAndCountAll({
       limit,
       offset: req.skip,
-      where: {
-        entidade_id,
-      },
+      where: whereClause,
     });
 
     const itemCount = result.count;
@@ -102,7 +106,7 @@ class PescadorController {
       }
     }
 
-    // Validação de CPF válido
+    // Validação de CPF válido (sempre)
     function isValidCPF(cpf) {
       cpf = cpf.replace(/\D/g, "");
       if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;

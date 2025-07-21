@@ -216,14 +216,12 @@ class GuiaController {
 
   async syncGuiaPescador(req, res) {
     const guias = await Guia.findAll();
-    let rgp = null;
     guias.forEach(async (guia) => {
-      rgp = guia.rgp;
-      const pescador = await Pescador.findOne({ where: { rgp } });
+      const pescador = await Pescador.findOne({ where: { id: guia.pescador_id } });
       if (pescador) {
         await Guia.update(
           {
-            ...guia,
+            ...guia.toJSON(),
             pescador_id: pescador.id,
           },
           {

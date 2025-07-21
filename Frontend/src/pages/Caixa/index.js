@@ -84,6 +84,7 @@ function Caixa(props) {
       </Header>
 
       {recibos && recibos.length > 0 && (
+        <>
         <table className="table table-responsive mt-4">
           <thead>
             <tr>
@@ -143,7 +144,20 @@ function Caixa(props) {
               </tr>
             ))}
           </tbody>
+          </table>
+          
           {loading ? <HashLoader size={30} /> : ""}
+          
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginTop: "20px"
+            }}
+          >
           <Pagination
             activePage={parseInt(pagination.currentPage)}
             pageCount={parseInt(pagination.pageCount)}
@@ -164,7 +178,8 @@ function Caixa(props) {
             lastPageText={<FaForward />}
             firstPageText={<FaBackward />}
           />
-        </table>
+          </div>
+        </>
       )}
 
 <Modal show={showModalExcluir} size="lg" centered>

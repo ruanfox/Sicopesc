@@ -10,29 +10,34 @@ module.exports = {
         allowNull: false,
       },
       valor: {
-        type: Sequelize.DECIMAL(8, 2),
+        type: Sequelize.DECIMAL,
+        allowNull: false,
       },
       data_emissao: {
-        type: Sequelize.DATEONLY,
-        defaultValue: Sequelize.NOW,
+        type: Sequelize.DATE,
+        allowNull: false,
       },
       ano: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      rgp: {
+        type: Sequelize.STRING(20),
+        allowNull: true,
       },
       pescador_id: {
         type: Sequelize.INTEGER,
-        allowNull: true,
         references: { model: "pescadors", key: "id" },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE",
+        onDelete: "SET NULL",
       },
       created_at: {
         type: Sequelize.DATE,
-        allowNull: true,
+        allowNull: false,
       },
       updated_at: {
         type: Sequelize.DATE,
-        allowNull: true,
+        allowNull: false,
       },
     });
   },

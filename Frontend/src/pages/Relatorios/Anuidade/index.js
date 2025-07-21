@@ -265,6 +265,18 @@ function RelatorioAnuidade(props) {
                 </tr>
               ))}
             </tbody>
+          </table>
+          
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginTop: "20px"
+            }}
+          >
             <Pagination
               activePage={parseInt(pagination.currentPage)}
               pageCount={parseInt(pagination.pageCount)}
@@ -280,7 +292,7 @@ function RelatorioAnuidade(props) {
               lastPageText={<FaForward />}
               firstPageText={<FaBackward />}
             />
-          </table>
+          </div>
         </>
       )}
     </Container>
