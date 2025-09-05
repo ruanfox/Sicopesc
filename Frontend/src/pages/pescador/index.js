@@ -58,7 +58,7 @@ export default function Pescador(props) {
     let p = values.page;
     const search = values.search;
     if (p) {
-      setPage(p);
+      setPage(parseInt(p));
     }
     setSearch(search);
   }, [props.location.search]);
@@ -71,8 +71,8 @@ export default function Pescador(props) {
     async function getPescadorByName() {
       setLoading(true);
 
-      const data = (await api.get(`/pescadores/nome/${search}?page=${page}`))
-        .data;
+      const data = (await api.get(`/pescadores/nome/${search}?page=${page}`)).data;
+      
       setPescadores(data.pescadores);
       setPagination({
         itemCount: data.itemCount,

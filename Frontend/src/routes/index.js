@@ -27,6 +27,8 @@ import Relatorios from "../pages/Relatorios";
 import RelatorioAnuidade from "../pages/Relatorios/Anuidade";
 import RelatorioCaixa from "../pages/Relatorios/Caixa";
 import ConfigRoute from "./ConfigRoute";
+import Documentos from "../pages/Documentos";
+import Seguro from "../pages/Documentos/Seguro";
 
 const Routes = () => (
   <Switch>
@@ -159,6 +161,20 @@ const Routes = () => (
       path="/relatorios/caixa"
       title="Relatório de Compra e venda de pescado"
       component={RelatorioCaixa}
+    />
+
+    <PrivateRoute
+      exact
+      path="/documentos"
+      title="Documentos"
+      component={Documentos}
+    />
+
+    <PrivateRoute
+      exact
+      path="/seguro"
+      title="Requerimento Seguro Defeso"
+      component={Seguro}
     />
 
     <Route

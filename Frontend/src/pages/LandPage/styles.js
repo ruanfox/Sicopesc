@@ -40,6 +40,10 @@ export const FeatureWrapper = styled.div`
   justify-content: center;
   border-bottom: 5px solid #c4c4c4;
   flex-wrap: wrap;
+
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
 export const FeatureImage = styled.img`
@@ -130,3 +134,21 @@ export const SlideButton = styled.a`
     color: white;
   }
 `;
+
+export const PortariaTitle = styled.a`
+  font-size: 1.5rem;
+  color: #4A4A4A;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  display: block;
+  text-decoration: none;
+`;
+
+export const PortariaTexto = styled.p`
+  font-size: 0.8rem;
+  color: #4A4A4A;
+  text-decoration: none;
+  display: block; // ou 'block' se quiser quebra natural
+`;
+
+

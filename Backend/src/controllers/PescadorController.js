@@ -17,14 +17,14 @@ class PescadorController {
 
     routes.use(authMiddleware);
 
-    routes.use(paginate.middleware(10, 50));
+    // Removido: routes.use(paginate.middleware(10, 10000));
 
     routes.post("/", this.store);
     routes.put("/:id", this.update);
     routes.delete("/:id", this.delete);
     routes.get("/", this.index);
-    routes.get("/:id", this.findById);
     routes.get("/nome/:nome", this.findByNome);
+    routes.get("/:id", this.findById);
     routes.get("/registros/total", this.getTotalPescadores);
     routes.get("/proximos/aniversarios", this.getProximosAniversarios);
     routes.get("/rgp/:rgp", this.findByRgp);
@@ -35,8 +35,9 @@ class PescadorController {
   async index(req, res) {
     const { entidade_id } = req;
 
-    const limit = req.query.limit ? req.query.limit : 10;
-    const page = req.query.page ? req.query.page : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const offset = (page - 1) * limit;
 
     // Se há um CPF específico na query, buscar por CPF
     const whereClause = { entidade_id };
@@ -46,7 +47,7 @@ class PescadorController {
 
     const result = await Pescador.findAndCountAll({
       limit,
-      offset: req.skip,
+      offset: offset,
       where: whereClause,
     });
 
@@ -202,12 +203,13 @@ class PescadorController {
 
     const { entidade_id } = req;
 
-    const limit = req.query.limit ? req.query.limit : 10;
-    const page = req.query.page ? req.query.page : 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const offset = (page - 1) * limit;
 
     const result = await Pescador.findAndCountAll({
       limit,
-      offset: req.skip,
+      offset,
       where: {
         nome: {
           [Op.like]: `%${nome}%`,
@@ -223,7 +225,7 @@ class PescadorController {
       pescadores: result.rows,
       pageCount,
       itemCount,
-      currentPage: page,
+      currentPage: Number(page),
       pages: paginate.getArrayPages(req)(3, pageCount, page),
     });
   }

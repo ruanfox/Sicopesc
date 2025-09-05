@@ -30,11 +30,12 @@ import Pagination from "react-js-pagination";
 
 function Anuidade(props) {
   const [guias, setGuias] = useState([]);
-  const [page, setPage] = useState(1);
-  const [idGuia, setIdGuia] = useState(null);
   const [nomePescador, setNomePescador] = useState("");
   const [, setLoading] = useState(false);
   const [search, setSearch] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [idGuia, setIdGuia] = useState(null);
   const [pagination, setPagination] = useState({
     itemCount: 0,
     pageCount: 0,
@@ -185,7 +186,11 @@ function Anuidade(props) {
         const { id } = response.data;
         props.history.push(`/ver-guia/${id}`);
       } catch (e) {
-        alert("Erro ao gerar guia, tente novamente!");
+        if (e.response && e.response.data && e.response.data.error) {
+          alert(e.response.data.error);
+        } else {
+          alert("Erro ao gerar guia, tente novamente!");
+        }
       } finally {
         setLoadingGuia(false);
       }

@@ -31,9 +31,15 @@ export const Wrapper = styled.div`
   }
   .btn {
     width: 100%;
-    height: 140px;
-    font-size: 24px;
+    max-width: 320px;
+    height: 180px;
+    font-size: 28px;
     font-weight: bold;
+    padding: 24px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 `;
 

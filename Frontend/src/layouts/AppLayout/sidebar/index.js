@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Container, Item } from "./styles";
 import { FaHome, FaChartBar, FaUser } from "react-icons/fa";
+import { IoDocumentTextOutline } from "react-icons/io5";
 import { Link, useLocation } from "react-router-dom";
 import { useAppLayout } from "../../../contexts/AppLayoutContext";
 import api from "../../../services/api";
@@ -84,6 +85,14 @@ export default function Sidebar() {
                 <FaChartBar size={14} style={{ marginRight: 8 }} />
                 <span>Relatórios</span>
               </a>
+            </Item>
+          </li>
+          <li>
+            <Item active={location.pathname === "/documentos"}>
+              <Link to="/documentos">
+                <IoDocumentTextOutline size={14} style={{ marginRight: 8 }} />
+                <span>Documentos</span>
+              </Link>
             </Item>
           </li>
         </ul>
