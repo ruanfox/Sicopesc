@@ -43,6 +43,19 @@ class GuiaController {
       if (!pescador)
         return res.status(404).json({ error: "Pescador não encontrado!" });
 
+      // Verificação de duplicidade de guia para o mesmo ano
+      const guiaExistente = await Guia.findOne({
+        where: {
+          pescador_id,
+          ano,
+        },
+      });
+      if (guiaExistente) {
+        return res
+          .status(400)
+          .json({ error: "Já existe uma guia para este pescador neste ano." });
+      }
+
       const guia = await Guia.create({
         valor,
         data_emissao,
@@ -202,10 +215,26 @@ class GuiaController {
         },
       });
 
+      if (!lastGuia) {
+        return res.status(404).json({ error: "Nenhuma guia anterior encontrada para este pescador." });
+      }
+
+      const proximoAno = lastGuia.ano + 1;
+
+      // Verifica duplicidade para o próximo ano
+      const existeProximoAno = await Guia.findOne({
+        where: { pescador_id, ano: proximoAno },
+      });
+      if (existeProximoAno) {
+        return res
+          .status(400)
+          .json({ error: "Já existe uma guia emitida para o próximo ano deste pescador." });
+      }
+
       const guia = await Guia.create({
         pescador_id: lastGuia.pescador_id,
         data_emissao: new Date(),
-        ano: lastGuia.ano + 1,
+        ano: proximoAno,
         valor: valor.valorGuia,
       });
       return res.json(guia);
@@ -216,14 +245,12 @@ class GuiaController {
 
   async syncGuiaPescador(req, res) {
     const guias = await Guia.findAll();
-    let rgp = null;
     guias.forEach(async (guia) => {
-      rgp = guia.rgp;
-      const pescador = await Pescador.findOne({ where: { rgp } });
+      const pescador = await Pescador.findOne({ where: { id: guia.pescador_id } });
       if (pescador) {
         await Guia.update(
           {
-            ...guia,
+            ...guia.toJSON(),
             pescador_id: pescador.id,
           },
           {

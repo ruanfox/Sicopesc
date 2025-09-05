@@ -30,11 +30,12 @@ import Pagination from "react-js-pagination";
 
 function Anuidade(props) {
   const [guias, setGuias] = useState([]);
-  const [page, setPage] = useState(1);
-  const [idGuia, setIdGuia] = useState(null);
   const [nomePescador, setNomePescador] = useState("");
   const [, setLoading] = useState(false);
   const [search, setSearch] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [idGuia, setIdGuia] = useState(null);
   const [pagination, setPagination] = useState({
     itemCount: 0,
     pageCount: 0,
@@ -129,18 +130,35 @@ function Anuidade(props) {
     const newRgp = event.target.value;
     setPescador(null);
     setRgp(newRgp);
+    
     if (newRgp.length > 4) {
-      const pescador = (await api.get(`/pescadores/rgp/${newRgp}`)).data;
+      // Primeiro tenta buscar pelo RGP
+      let pescador = null;
+      try {
+        pescador = (await api.get(`/pescadores/rgp/${newRgp}`)).data;
+      } catch (e) {
+        pescador = null;
+      }
+      
+      // Se não encontrar pelo RGP, tenta buscar pelo CPF
+      if (!pescador) {
+        try {
+          const response = await api.get(`/pescadores?cpf=${newRgp}`);
+          if (response.data && response.data.pescadores && response.data.pescadores.length > 0) {
+            pescador = response.data.pescadores[0];
+          }
+        } catch (e) {
+          pescador = null;
+        }
+      }
 
       if (pescador) {
         setPescador(pescador);
-
         const guias = pescador.guias;
-
-        if (guias.length === 0) return;
-
+        if (guias && guias.length > 0) {
         const ultimaGuia = guias[guias.length - 1];
         setOptionsAnos([ultimaGuia.ano, ultimaGuia.ano + 1]);
+        }
       }
     }
   }
@@ -159,14 +177,20 @@ function Anuidade(props) {
           ano,
         };
         const jsonData = JSON.stringify(data);
+        
         const response = await api.post(
           `/pescadores/${pescadorId}/guias`,
           jsonData
         );
+        
         const { id } = response.data;
         props.history.push(`/ver-guia/${id}`);
       } catch (e) {
-        alert("Erro, tente novamente!");
+        if (e.response && e.response.data && e.response.data.error) {
+          alert(e.response.data.error);
+        } else {
+          alert("Erro ao gerar guia, tente novamente!");
+        }
       } finally {
         setLoadingGuia(false);
       }
@@ -175,32 +199,9 @@ function Anuidade(props) {
     if (pescador) {
       gerarGuia(pescador.id);
     } else {
-      const data = {
-        nome,
-        cpf: null,
-        rg: null,
-        nascimento: null,
-        rgp,
-        data_de_emissao_rgp: null,
-        data_do_primeiro_rgp: null,
-        titulo: null,
-        data_de_filiacao: null,
-        nit: null,
-        cei: null,
-      };
-
-      try {
-        const response = await api.post("/pescadores", data);
-
-        if (response.data.erro) {
-          alert("erro " + response.data.erro);
-        } else if (response.status === 200) {
-          const pescadorId = response.data.id;
-          gerarGuia(pescadorId);
-        }
-      } catch (e) {
-        //
-      }
+      // Não tenta mais cadastrar novo pescador!
+      setLoadingGuia(false);
+      alert("Pescador não encontrado. Verifique os dados informados (RGP, CPF ou Nome) ou cadastre o pescador antes de gerar a guia.");
     }
   }
 
@@ -280,9 +281,9 @@ function Anuidade(props) {
                     type="text"
                     autoComplete="off"
                     placeholder="Nome"
-                    value={pescador ? pescador.nome : nome}
+                    value={nome}
                     onChange={(e) => setNome(e.target.value)}
-                    disabled={!!pescador}
+                    disabled={false}
                     required
                   />
                 </div>
@@ -366,6 +367,7 @@ function Anuidade(props) {
                   style={{ width: "100%", fontSize: 18 }}
                   type="submit"
                   className="btn btn-primary"
+                  disabled={loadingGuia}
                 >
                   {!loadingGuia ? (
                     "Gerar guia de pagamento"
@@ -379,6 +381,7 @@ function Anuidade(props) {
         </div>
       </div>
       {guias && guias.length > 0 && (
+        <>
         <table className="table table-responsive mt-4">
           <thead>
             <tr>
@@ -426,6 +429,8 @@ function Anuidade(props) {
               </tr>
             ))}
           </tbody>
+          </table>
+          
           <div
             style={{
               width: "100%",
@@ -433,6 +438,7 @@ function Anuidade(props) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              marginTop: "20px"
             }}
           >
             <Pagination
@@ -456,7 +462,7 @@ function Anuidade(props) {
               firstPageText={<FaBackward />}
             />
           </div>
-        </table>
+        </>
       )}
       <Modal show={showModalExcluir} size="lg" centered>
         <Modal.Header>

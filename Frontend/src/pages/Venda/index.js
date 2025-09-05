@@ -37,7 +37,12 @@ function Venda(props) {
         props.history.push(`/recibo/${response.data.id}`);
       })
       .catch((e) => {
-        console.log("erro ao criar recibo", e);
+        // Mostrar erro para o usuário
+        if (e.response?.data?.error) {
+          alert(`Erro: ${e.response.data.error}`);
+        } else {
+          alert("Erro ao criar recibo. Verifique os dados e tente novamente.");
+        }
       })
       .finally(() => {
         setLoadingRecibo(false);

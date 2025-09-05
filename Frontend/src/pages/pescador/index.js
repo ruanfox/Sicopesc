@@ -58,7 +58,7 @@ export default function Pescador(props) {
     let p = values.page;
     const search = values.search;
     if (p) {
-      setPage(p);
+      setPage(parseInt(p));
     }
     setSearch(search);
   }, [props.location.search]);
@@ -71,8 +71,8 @@ export default function Pescador(props) {
     async function getPescadorByName() {
       setLoading(true);
 
-      const data = (await api.get(`/pescadores/nome/${search}?page=${page}`))
-        .data;
+      const data = (await api.get(`/pescadores/nome/${search}?page=${page}`)).data;
+      
       setPescadores(data.pescadores);
       setPagination({
         itemCount: data.itemCount,
@@ -191,7 +191,20 @@ export default function Pescador(props) {
             </tr>
           ))}
         </tbody>
+      </table>
+      
         {loading ? <HashLoader size={30} /> : ""}
+      
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "20px"
+        }}
+      >
         <Pagination
           activePage={parseInt(pagination.currentPage)}
           pageCount={parseInt(pagination.pageCount)}
@@ -212,7 +225,7 @@ export default function Pescador(props) {
           lastPageText={<FaForward />}
           firstPageText={<FaBackward />}
         />
-      </table>
+      </div>
 
       <Modal show={showModalExcluir} size="lg" centered>
         <Modal.Header>

@@ -4,6 +4,7 @@ import { FaUser, FaBars, FaDoorOpen, FaAngleLeft } from "react-icons/fa";
 import { Redirect, useLocation } from "react-router-dom";
 import { Container } from "./styles";
 import { useAppLayout } from "../../../contexts/AppLayoutContext";
+import api from "../../../services/api";
 
 export default function Topbar({ title = "", history, back = true }) {
   //const dispatch = useDispatch();
@@ -17,10 +18,23 @@ export default function Topbar({ title = "", history, back = true }) {
     dispatch({ type: "TOGGLE_SIDEBAR" });
   }*/
 
-  function signoff() {
+  async function signoff() {
+    const refresh_token = localStorage.getItem("refresh_token");
+
+    if (refresh_token) {
+      try {
+        await api.post("/users/logout", { refresh_token });
+      } catch (error) {
+        console.error("Erro ao deslogar:", error);
+      }
+    }
+
     localStorage.removeItem("entidade_id");
     localStorage.removeItem("_token");
     localStorage.removeItem("USER_ROLE");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user_name");
+
     setToLogin(true);
   }
 

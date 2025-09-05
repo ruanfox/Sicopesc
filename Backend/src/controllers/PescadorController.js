@@ -17,14 +17,14 @@ class PescadorController {
 
     routes.use(authMiddleware);
 
-    routes.use(paginate.middleware(10, 50));
+    // Removido: routes.use(paginate.middleware(10, 10000));
 
     routes.post("/", this.store);
     routes.put("/:id", this.update);
     routes.delete("/:id", this.delete);
     routes.get("/", this.index);
-    routes.get("/:id", this.findById);
     routes.get("/nome/:nome", this.findByNome);
+    routes.get("/:id", this.findById);
     routes.get("/registros/total", this.getTotalPescadores);
     routes.get("/proximos/aniversarios", this.getProximosAniversarios);
     routes.get("/rgp/:rgp", this.findByRgp);
@@ -35,15 +35,20 @@ class PescadorController {
   async index(req, res) {
     const { entidade_id } = req;
 
-    const limit = req.query.limit ? req.query.limit : 10;
-    const page = req.query.page ? req.query.page : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const offset = (page - 1) * limit;
+
+    // Se há um CPF específico na query, buscar por CPF
+    const whereClause = { entidade_id };
+    if (req.query.cpf) {
+      whereClause.cpf = req.query.cpf;
+    }
 
     const result = await Pescador.findAndCountAll({
       limit,
-      offset: req.skip,
-      where: {
-        entidade_id,
-      },
+      offset: offset,
+      where: whereClause,
     });
 
     const itemCount = result.count;
@@ -65,6 +70,96 @@ class PescadorController {
 
     if (!entidade)
       return res.status(404).json({ error: "entidade não encontrada!" });
+
+    const requiredFields = [
+      "nome",
+      "cpf",
+      "rg",
+      "nascimento",
+      "rgp",
+      "data_de_emissao_rgp",
+      "data_do_primeiro_rgp",
+      "data_de_filiacao",
+      "titulo",
+      "nit",
+      "cei"
+    ];
+    // Validação de campos obrigatórios
+    for (const field of requiredFields) {
+      if (!req.body[field] || req.body[field].toString().trim() === "") {
+        console.error(`Erro de validação: O campo '${field}' é obrigatório e não pode estar vazio.`);
+        return res.status(400).json({ error: `O campo '${field}' é obrigatório e não pode estar vazio.` });
+      }
+    }
+    // Validação específica para campos de data
+    const dateFields = [
+      "nascimento",
+      "data_de_emissao_rgp",
+      "data_do_primeiro_rgp",
+      "data_de_filiacao"
+    ];
+    
+    for (const field of dateFields) {
+      const value = req.body[field];
+      if (!value || value.toString().trim() === "" || isNaN(Date.parse(value))) {
+        console.error(`Erro de validação: O campo '${field}' deve ser uma data válida e não pode estar vazio.`);
+        return res.status(400).json({ error: `O campo '${field}' deve ser uma data válida e não pode estar vazio.` });
+      }
+    }
+
+    // Validação de CPF válido (sempre)
+    function isValidCPF(cpf) {
+      cpf = cpf.replace(/\D/g, "");
+      if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+      let sum = 0, rest;
+      for (let i = 1; i <= 9; i++) sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+      rest = (sum * 10) % 11;
+      if (rest === 10 || rest === 11) rest = 0;
+      if (rest !== parseInt(cpf.substring(9, 10))) return false;
+      sum = 0;
+      for (let i = 1; i <= 10; i++) sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+      rest = (sum * 10) % 11;
+      if (rest === 10 || rest === 11) rest = 0;
+      if (rest !== parseInt(cpf.substring(10, 11))) return false;
+      return true;
+    }
+    if (!isValidCPF(req.body.cpf)) {
+      console.error("Erro de validação: CPF inválido.");
+      return res.status(400).json({ error: "CPF inválido." });
+    }
+
+    // Validação de datas
+    const hoje = new Date();
+    const dataPrimeiroRgp = new Date(req.body.data_do_primeiro_rgp);
+    const dataFiliacao = new Date(req.body.data_de_filiacao);
+    if (dataPrimeiroRgp > hoje) {
+      console.error("Erro de validação: A data do primeiro RGP não pode ser maior que a data atual.");
+      return res.status(400).json({ error: "A data do primeiro RGP não pode ser maior que a data atual." });
+    }
+    if (dataFiliacao > hoje) {
+      console.error("Erro de validação: A data de filiação não pode ser maior que a data atual.");
+      return res.status(400).json({ error: "A data de filiação não pode ser maior que a data atual." });
+    }
+
+    // Verificação de duplicidade de CPF, RG ou RGP
+    const existing = await Pescador.findOne({
+      where: {  
+        [Op.or]: [
+          { cpf: req.body.cpf },
+          { rg: req.body.rg },
+          { rgp: req.body.rgp }
+        ],
+        entidade_id
+      }
+    });
+    if (existing) {
+      let field = "";
+      if (existing.cpf === req.body.cpf) field = "CPF";
+      else if (existing.rg === req.body.rg) field = "RG";
+      else if (existing.rgp === req.body.rgp) field = "RGP";
+      console.error(`Erro de validação: Já existe um pescador cadastrado com este ${field}.`);
+      return res.status(400).json({ error: `Já existe um pescador cadastrado com este ${field}.` });
+    }
 
     const pescador = await Pescador.create({
       ...req.body,
@@ -108,12 +203,13 @@ class PescadorController {
 
     const { entidade_id } = req;
 
-    const limit = req.query.limit ? req.query.limit : 10;
-    const page = req.query.page ? req.query.page : 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const offset = (page - 1) * limit;
 
     const result = await Pescador.findAndCountAll({
       limit,
-      offset: req.skip,
+      offset,
       where: {
         nome: {
           [Op.like]: `%${nome}%`,
@@ -129,7 +225,7 @@ class PescadorController {
       pescadores: result.rows,
       pageCount,
       itemCount,
-      currentPage: page,
+      currentPage: Number(page),
       pages: paginate.getArrayPages(req)(3, pageCount, page),
     });
   }

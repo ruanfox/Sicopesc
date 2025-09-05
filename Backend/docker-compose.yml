@@ -1,7 +1,6 @@
-version: "3.7"
 services:
   db_siscol:
-    image: mysql
+    image: mysql:8
     container_name: mysql-container
     volumes:
       - ./db_data:/var/lib/mysql
@@ -35,8 +34,8 @@ services:
     restart: always
     ports:
       - "4000:4000"
-    command: bash -c "npm i && npx sequelize db:migrate && npm run dev"
     working_dir: /home/app
+    command: bash -c "./wait-for-it.sh db_siscol:3306 --timeout=60 --strict -- bash -c 'npm install && npx sequelize db:migrate && npm run dev  '"
     depends_on:
       - db_siscol
     environment:

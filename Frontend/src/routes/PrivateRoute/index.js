@@ -1,16 +1,22 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 import AppLayout from "../../layouts/AppLayout";
 
 const PrivateRoute = ({ component: Component, title = "", ...rest }) => {
+  const isAuthenticated = localStorage.getItem("_token");
+
   return (
     <Route
       {...rest}
-      render={(props) => (
-        <AppLayout {...props} title={title}>
-          <Component {...props} {...rest} />
-        </AppLayout>
-      )}
+      render={(props) =>
+        isAuthenticated ? (
+          <AppLayout {...props} title={title}>
+            <Component {...props} {...rest} />
+          </AppLayout>
+        ) : (
+          <Redirect to="/login" />
+        )
+      }
     />
   );
 };

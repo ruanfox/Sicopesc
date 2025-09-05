@@ -15,7 +15,9 @@ class UserController {
     routes.post("/users/register", this.register);
     routes.post("/users/update/:id", this.update);
     routes.post("/users/authenticate", this.authenticate);
+    routes.post("/users/logout", this.logout);
     routes.post("/users/refresh-token", this.refreshTokenCheck);
+    
 
     routes.use(authMiddleware);
 
@@ -199,6 +201,29 @@ class UserController {
     }
 
     return res.json({ user, token, refresh_token: refreshToken.token });
+  }
+
+  async logout(req, res) {
+    const { refresh_token } = req.body;
+
+    if (!refresh_token) {
+      return res.status(400).send({ error: "Refresh token não informado." });
+    }
+
+    const refreshToken = await RefreshToken.findOne({
+      where: { token: refresh_token },
+    });
+
+    if (!refreshToken) {
+      return res.status(400).send({ error: "Refresh token inválido." });
+    }
+
+    await RefreshToken.update(
+      { is_valid: false },
+      { where: { id: refreshToken.id } }
+    );
+
+    return res.status(200).send({ message: "Logout realizado com sucesso." });
   }
 
   async refreshTokenCheck(req, res) {

@@ -1,4 +1,5 @@
 const { Entidade, Recibo } = require("../models");
+const Pescador = require("../models/Pescador");
 
 const { Op } = require("sequelize");
 const paginate = require("express-paginate");
@@ -58,20 +59,68 @@ class ReciboController {
   }
 
   async store(req, res) {
-    const { entidade_id } = req;
+    try {
+      const { entidade_id } = req;
+  
+      const entidade = await Entidade.findByPk(entidade_id);
+  
+      if (!entidade)
+        return res.status(404).json({ error: "entidade não encontrada!" });
+  
+      let pescador = null;
+  
 
-    const entidade = await Entidade.findByPk(entidade_id);
+  
+      if (req.body.cpf && req.body.nome && req.body.cpf.trim() && req.body.nome.trim()) {
+        pescador = await Pescador.findOne({
+          where: {
+            cpf: req.body.cpf,
+            nome: req.body.nome,
+            entidade_id
+          }
+        });
 
-    if (!entidade)
-      return res.status(404).json({ error: "entidade não encontrada!" });
+      }
+  
+      if (!pescador && req.body.rgp && req.body.rgp.trim()) {
+        pescador = await Pescador.findOne({
+          where: {
+            rgp: req.body.rgp,
+            entidade_id
+          }
+        });
+        console.log('Busca por RGP:', pescador ? pescador.id : 'não encontrado');
+      }
+  
+      if (!pescador && req.body.nome && req.body.nome.trim()) {
+        pescador = await Pescador.findOne({
+          where: {
+            nome: req.body.nome,
+            entidade_id
+          }
+        });
+        console.log('Busca por Nome simples:', pescador ? pescador.id : 'não encontrado');
+      }
+  
+      if (!pescador) {
+        console.log('Pescador não encontrado com os dados fornecidos');
+        return res.status(404).json({ error: "Pescador não encontrado." });
+      }
+  
+            const recibo = await Recibo.create({
+        ...req.body,
+        entidade_id,
+        pescador_id: pescador.id,
+      });
 
-    const recibo = await Recibo.create({
-      ...req.body,
-      entidade_id,
-    });
-
-    return res.json(recibo);
+      return res.json(recibo);
+    } catch (err) {
+      console.error("Erro ao criar recibo:", err);
+      return res.status(400).json({ error: err.message || "Erro ao gerar o recolhimento." });
+    }
   }
+  
+  
 
   async delete(req, res) {
     const { id } = req.params;
