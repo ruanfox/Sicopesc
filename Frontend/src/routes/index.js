@@ -29,6 +29,7 @@ import RelatorioCaixa from "../pages/Relatorios/Caixa";
 import ConfigRoute from "./ConfigRoute";
 import Documentos from "../pages/Documentos";
 import Seguro from "../pages/Documentos/Seguro";
+import ShowSeguro from "../pages/Documentos/Seguro/ShowSeguro";
 
 const Routes = () => (
   <Switch>
@@ -162,7 +163,7 @@ const Routes = () => (
       title="Relatório de Compra e venda de pescado"
       component={RelatorioCaixa}
     />
-
+   
     <PrivateRoute
       exact
       path="/documentos"
@@ -172,9 +173,16 @@ const Routes = () => (
 
     <PrivateRoute
       exact
-      path="/seguro"
+      path="/documentos/seguro"
       title="Requerimento Seguro Defeso"
       component={Seguro}
+    />
+
+    <PrivateRoute
+      exact
+      path="/documentos/seguro/exibir-seguro"
+      title="Exibir Requerimento Seguro Defeso"
+      component={ShowSeguro}
     />
 
     <Route

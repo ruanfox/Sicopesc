@@ -1,7 +1,6 @@
 import React from "react";
 import { Container, Wrapper } from "../main/styles";
 import { ButtonAction } from "../main/styles";
-import { Link } from "react-router-dom";
 
 export default function Documentos(props) {
   return (
@@ -26,15 +25,14 @@ export default function Documentos(props) {
             </ButtonAction>
           </div>
           <div className="col-md-3 col-sm-12 d-flex justify-content-center mb-3">
-            <Link to="/seguro" style={{ width: '100%' }}>
               <ButtonAction
                 delay={800}
                 className="btn btn-primary"
                 style={{ width: '100%' }}
+                onClick={() => props.history.push(`/documentos/seguro`)}
               >
                 REQUERIMENTO SEGURO DEFESO
               </ButtonAction>
-            </Link>
           </div>
           <div className="col-md-3 col-sm-12 d-flex justify-content-center">
             <ButtonAction
