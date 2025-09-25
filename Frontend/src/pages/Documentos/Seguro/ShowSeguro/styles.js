@@ -4,6 +4,7 @@ export const Container = styled.div`
   width: 781px;
   margin: 0 auto;
   background: #ffffff;
+<<<<<<< HEAD
   color: black;
   padding: 20px;
   border: 1px solid #ccc;
@@ -24,6 +25,49 @@ export const Container = styled.div`
     font-size: 12px;
     font-weight: bold;
   }
+=======
+  padding: 20px;
+  border: 1px solid #ccc;
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .logo img.brasao {
+    width: 100px;
+    margin-bottom: 10px;
+  }
+
+  .logo h3 {
+    margin: 2px 0;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .logo h4 {
+    margin: 8px 0 4px;
+    font-size: 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .logo p {
+    margin: 2px 0;
+    font-size: 13px;
+  }
+
+  .logo p.sub {
+    font-size: 12px;
+    font-style: italic;
+    color: #333;
+    margin-top: 6px;
+  }
+
+>>>>>>> feature/alteracoes
   table {
     width: 100%;
     border-collapse: collapse;
@@ -55,9 +99,12 @@ export const Container = styled.div`
     padding: 8px;
     background: #f9f9f9;
   }
+<<<<<<< HEAD
 
   input[type="checkbox"],
   input[type="radio"] {
     margin-right: 4px;
   }
+=======
+>>>>>>> feature/alteracoes
 `;

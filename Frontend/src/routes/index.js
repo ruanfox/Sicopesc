@@ -163,7 +163,11 @@ const Routes = () => (
       title="Relatório de Compra e venda de pescado"
       component={RelatorioCaixa}
     />
+<<<<<<< HEAD
     {/* Rota de Documentos */}
+=======
+   
+>>>>>>> feature/alteracoes
     <PrivateRoute
       exact
       path="/documentos"
@@ -173,6 +177,7 @@ const Routes = () => (
 
     <PrivateRoute
       exact
+<<<<<<< HEAD
       path="/seguro/exibir-seguro"
       title="Requerimento Seguro Defeso"
       component={ShowSeguro}
@@ -181,8 +186,18 @@ const Routes = () => (
     <PrivateRoute
       exact
       path="/seguro"
+=======
+      path="/documentos/seguro"
+>>>>>>> feature/alteracoes
       title="Requerimento Seguro Defeso"
       component={Seguro}
+    />
+
+    <PrivateRoute
+      exact
+      path="/documentos/seguro/exibir-seguro"
+      title="Exibir Requerimento Seguro Defeso"
+      component={ShowSeguro}
     />
 
     <Route

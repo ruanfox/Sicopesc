@@ -1,3 +1,4 @@
+
 import React, { useCallback, useEffect, useState } from "react";
 import { 
     Container,
@@ -121,7 +122,11 @@ function Seguro(props) {
                       className="btn btn-warning"
                       type="button"
                       title="Documento do Seguro"
+<<<<<<< HEAD
                       onClick={() => props.history.push("/seguro/exibir-seguro")}
+=======
+                      onClick={() => props.history.push(`/documentos/seguro/exibir-seguro`)}
+>>>>>>> feature/alteracoes
                     >
                       <IoDocumentText />
                     </DocButton>
