@@ -3,6 +3,7 @@
 ### Pré-requisitos
 - Docker
 - Docker Compose
+- Git
 
 ### Instalação
 
@@ -28,16 +29,16 @@ sudo nano .env
 
 # Adicione essas variaveis
 
-PORT=4000
+PORT=4000 #não alterar
 NODE_ENV=nome
 
-DB_HOST=nome_da_maquina
+DB_HOST=db_siscol #não alterar
 DB_PORT=3306
 DB_USER=nome_do_usuario
 DB_PASS=senha_do_banco
 DB_NAME=siscol0_production
 DB_ROOT_PASS=senha_do_root
-DB_DIALECT=mysql
+DB_DIALECT=mysql #não alterar
 
 # .env do Frontend
 cd Sicopesc/Frontend/
@@ -122,6 +123,7 @@ cd Frontend && sudo docker-compose restart
 sudo docker logs frontend-sicopesc
 ```
 
+DB_HOST=nome_da_maquina
 ### Problema: API não responde
 ```bash
 sudo docker logs backend-siscol-container
