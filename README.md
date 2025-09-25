@@ -14,7 +14,7 @@ cd Sicopesc
 
 2. **Execute o script para orquestrar a ordem dos containers do backend:**
 ```bash
-cd Sicopesc/Backend/
+cd Sicopesc/Backend/ 
 
 curl -o wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
 chmod +x wait-for-it.sh
