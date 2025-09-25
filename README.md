@@ -1,7 +1,5 @@
 # Sicopesc - Sistema de Controle de Pescadores
 
-## 🚀 Setup Rápido
-
 ### Pré-requisitos
 - Docker
 - Docker Compose
@@ -14,18 +12,64 @@ git clone <url-do-repositorio>
 cd Sicopesc
 ```
 
-2. **Execute o script de setup:**
+2. **Execute o script para orquestrar a ordem dos containers do backend:**
 ```bash
-chmod +x setup.sh
-./setup.sh
+cd Sicopesc/Backend/
+
+curl -o wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+chmod +x wait-for-it.sh
+```
+3. **Configuere as variaveis de ambiente do Backend e Frontend:**
+```bash
+# .env do backend
+cd Sicopesc/Backend/
+
+sudo nano .env
+
+# Adicione essas variaveis
+
+PORT=4000
+NODE_ENV=nome
+
+DB_HOST=nome_da_maquina
+DB_PORT=3306
+DB_USER=nome_do_usuario
+DB_PASS=senha_do_banco
+DB_NAME=siscol0_production
+DB_ROOT_PASS=senha_do_root
+DB_DIALECT=mysql
+
+# .env do Frontend
+cd Sicopesc/Frontend/
+
+sudo nano .env
+
+
+# Adicione a variavel
+
+REACT_APP_API_URL=http://localhost:4000
 ```
 
-3. **Acesse o sistema:**
+4. **Inicie os containers:**
+```bash
+# Iniciar o container do Backend
+
+cd Sicopesc/Backend/
+
+sudo docker compose down && sudo docker compose up --build
+
+# Iniciar o container do Frontend
+
+cd Sicopesc/Frontend/
+
+sudo docker compose down && sudo docker compose up --build
+```
+5. **Acesse o sistema:**
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:4000
 - phpMyAdmin: http://localhost:8082
 
-## 📋 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 Sicopesc/
@@ -45,8 +89,6 @@ Sicopesc/
 │   └── docker-compose.yml # Configuração Docker Frontend
 └── setup.sh               # Script de setup automático
 ```
-
-## 🔧 Comandos Úteis
 
 ### Ver logs dos containers:
 ```bash
@@ -74,37 +116,6 @@ cd Backend && sudo docker-compose restart
 # Frontend
 cd Frontend && sudo docker-compose restart
 ```
-
-## 🗄️ Banco de Dados
-
-### Estrutura Principal:
-- **pescadores**: Cadastro de pescadores
-- **guias**: Guias de pagamento
-- **recibos**: Recibos de venda/compra
-- **entidades**: Entidades/colônias
-- **usuarios**: Usuários do sistema
-
-### Migrações:
-As migrações são executadas automaticamente na inicialização do backend.
-
-## 🛠️ Desenvolvimento
-
-### Hot Module Replacement (HMR):
-O frontend está configurado com HMR ativo. Alterações no código são aplicadas automaticamente.
-
-### Estrutura de Migrações:
-- Todas as alterações de banco devem ser feitas via migrações
-- Os campos devem ser definidos tanto no Model quanto na migração inicial
-- Migrações são executadas automaticamente no startup
-
-## 📝 Notas Importantes
-
-- O banco de dados é persistido em `Backend/db_data/`
-- As migrações garantem que a estrutura do banco seja sempre consistente
-- O sistema usa autenticação JWT
-- Todas as operações são filtradas por `entidade_id`
-
-## 🐛 Troubleshooting
 
 ### Problema: Página não renderiza
 ```bash

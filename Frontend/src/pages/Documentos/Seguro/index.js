@@ -79,6 +79,7 @@ function Seguro(props) {
     if (nomePescador === "") return props.history.push(`/seguro`);
     return props.history.push(`/seguro?search=${encodeURIComponent(nomePescador)}`);
   }
+  
 
   return (
     <Container>
@@ -120,6 +121,7 @@ function Seguro(props) {
                       className="btn btn-warning"
                       type="button"
                       title="Documento do Seguro"
+                      onClick={() => props.history.push("/seguro/exibir-seguro")}
                     >
                       <IoDocumentText />
                     </DocButton>
